@@ -19,6 +19,9 @@ export interface IconButtonProps {
   active?: boolean;
   disabled?: boolean;
   onClick?: (e: GestureResponderEvent) => void;
+  /** Press-and-hold support (push-to-talk mic). Fired alongside onClick's own press lifecycle. */
+  onPressIn?: (e: GestureResponderEvent) => void;
+  onPressOut?: (e: GestureResponderEvent) => void;
 }
 
 export function IconButton({
@@ -29,6 +32,8 @@ export function IconButton({
   active = false,
   disabled = false,
   onClick,
+  onPressIn,
+  onPressOut,
 }: IconButtonProps) {
   const crt = useCRT();
   const { hovered, handlers } = useInteractiveState();
@@ -64,6 +69,14 @@ export function IconButton({
       accessibilityLabel={label}
       accessibilityState={{ disabled }}
       {...handlers}
+      onPressIn={(e) => {
+        handlers.onPressIn(e);
+        onPressIn?.(e);
+      }}
+      onPressOut={(e) => {
+        handlers.onPressOut(e);
+        onPressOut?.(e);
+      }}
       style={
         [
           {

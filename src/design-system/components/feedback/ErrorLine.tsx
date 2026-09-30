@@ -13,9 +13,12 @@ export interface ErrorLineProps {
   children: React.ReactNode;
   onRetry?: () => void;
   retryLabel?: string;
+  retryGlyph?: string;
+  /** Extra content on the right, e.g. a VT323 countdown for 429. */
+  trailing?: React.ReactNode;
 }
 
-export function ErrorLine({ code, children, onRetry, retryLabel = 'RETRY' }: ErrorLineProps) {
+export function ErrorLine({ code, children, onRetry, retryLabel = 'RETRY', retryGlyph = '[↻]', trailing }: ErrorLineProps) {
   return (
     <View
       accessibilityRole="alert"
@@ -35,6 +38,7 @@ export function ErrorLine({ code, children, onRetry, retryLabel = 'RETRY' }: Err
         {code ? `${code} · ` : ''}
         {children}
       </Text>
+      {trailing}
       {onRetry && (
         <Pressable accessibilityRole="button" onPress={onRetry} style={webCursor('pointer')}>
           <Text
@@ -45,7 +49,7 @@ export function ErrorLine({ code, children, onRetry, retryLabel = 'RETRY' }: Err
               letterSpacing: em(fontSize.small, tracking.button),
             }}
           >
-            [↻] {retryLabel}
+            {retryGlyph} {retryLabel}
           </Text>
         </Pressable>
       )}

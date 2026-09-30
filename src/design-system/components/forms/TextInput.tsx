@@ -33,6 +33,8 @@ export interface TextInputProps {
   error?: string;
   disabled?: boolean;
   autoFocus?: boolean;
+  /** Selects the existing value on focus — inline session rename uses this. */
+  selectTextOnFocus?: boolean;
   inputRef?: React.Ref<RNTextInput>;
 }
 
@@ -46,6 +48,7 @@ export function TextInput({
   error,
   disabled = false,
   autoFocus,
+  selectTextOnFocus,
   inputRef,
 }: TextInputProps) {
   const { focused, handlers } = useInteractiveState();
@@ -114,6 +117,7 @@ export function TextInput({
           placeholderTextColor={colors.textMeta}
           editable={!disabled}
           autoFocus={autoFocus}
+          selectTextOnFocus={selectTextOnFocus}
           onFocus={handlers.onFocus}
           onBlur={handlers.onBlur}
           selectionColor={colors.gold}

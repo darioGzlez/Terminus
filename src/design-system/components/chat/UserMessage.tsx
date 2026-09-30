@@ -43,9 +43,11 @@ export interface UserMessageProps {
   children?: React.ReactNode;
   /** ImageFrame / VoiceNote rendered above the text */
   media?: React.ReactNode;
+  /** Not sent yet (503 failure / offline / rate-limit queue): dashed border. */
+  dashed?: boolean;
 }
 
-export function UserMessage({ label = 'You', time, children, media }: UserMessageProps) {
+export function UserMessage({ label = 'You', time, children, media, dashed = false }: UserMessageProps) {
   return (
     <View style={{ flexDirection: 'column', gap: spacing.sp2 }}>
       <UserHeader left={label} right={time} />
@@ -54,6 +56,7 @@ export function UserMessage({ label = 'You', time, children, media }: UserMessag
         <View
           style={{
             borderWidth: 1,
+            borderStyle: dashed ? 'dashed' : 'solid',
             borderColor: colors.borderInput,
             backgroundColor: colors.surfacePanel,
             paddingVertical: spacing.sp3,

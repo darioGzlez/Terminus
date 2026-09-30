@@ -27,6 +27,9 @@ export interface ImageFrameProps {
   onOpen?: () => void;
   /** Image area height px. Default 220 */
   height?: number;
+  /** 413-style failure: dashed red border. `errorSlot` renders the ErrorLine/action below. */
+  error?: boolean;
+  errorSlot?: React.ReactNode;
 }
 
 export function ImageFrame({
@@ -40,15 +43,17 @@ export function ImageFrame({
   onCancel,
   onOpen,
   height = 220,
+  error = false,
+  errorSlot,
 }: ImageFrameProps) {
   const agent = from === 'agent';
-  const edge = agent ? colors.gold : colors.borderInput;
+  const edge = error ? colors.statusError : agent ? colors.gold : colors.borderInput;
   const uploading = typeof progress === 'number' && progress < 100;
   const cells = 10;
   const n = Math.round(((progress || 0) / 100) * cells);
 
   return (
-    <View style={{ borderWidth: 1, borderColor: edge, backgroundColor: agent ? 'transparent' : colors.surfacePanel }}>
+    <View style={{ borderWidth: 1, borderStyle: error ? 'dashed' : 'solid', borderColor: edge, backgroundColor: agent ? 'transparent' : colors.surfacePanel }}>
       {(filename || meta) && (
         <View
           style={{
@@ -58,17 +63,18 @@ export function ImageFrame({
             paddingVertical: 6,
             paddingHorizontal: 10,
             borderBottomWidth: 1,
+            borderStyle: error ? 'dashed' : 'solid',
             borderBottomColor: edge,
           }}
         >
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{ flexShrink: 1, color: agent ? colors.textAccent : colors.textBody, fontSize: fontSize.label }}
+            style={{ flexShrink: 1, color: error ? colors.statusError : agent ? colors.textAccent : colors.textBody, fontSize: fontSize.label }}
           >
             {filename}
           </Text>
-          <Text numberOfLines={1} style={{ color: colors.textMeta, fontSize: fontSize.label }}>
+          <Text numberOfLines={1} style={{ color: error ? colors.statusError : colors.textMeta, fontSize: fontSize.label }}>
             {meta}
           </Text>
         </View>
@@ -134,6 +140,12 @@ export function ImageFrame({
           <Text style={{ fontSize: fontSize.body, lineHeight: lh(fontSize.body, lineHeight.body), color: colors.textBody }}>
             {caption}
           </Text>
+        </View>
+      )}
+
+      {errorSlot && (
+        <View style={{ paddingVertical: 10, paddingHorizontal: spacing.sp3, borderTopWidth: 1, borderStyle: 'dashed', borderTopColor: edge }}>
+          {errorSlot}
         </View>
       )}
     </View>
