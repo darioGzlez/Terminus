@@ -16,11 +16,21 @@ export interface ComposerProps {
   onSend?: (value: string) => void;
   onAttach?: () => void;
   onMic?: () => void;
+  /** Push-to-talk hold detection — used instead of onMic on touch devices. */
+  onMicPressIn?: () => void;
+  onMicPressOut?: () => void;
   placeholder?: string;
   disabled?: boolean;
   /** AttachmentTray rendered above the input row */
   tray?: React.ReactNode;
   micLabel?: string;
+  /** Agent is thinking or streaming: action button becomes "[■] stop". */
+  busy?: boolean;
+  onStop?: () => void;
+  /** 429: text stays editable, but attach/mic/send/stop are disabled. */
+  actionsDisabled?: boolean;
+  /** Pending photos in the tray: the action button is "send" even with no caption text. */
+  hasAttachments?: boolean;
 }
 
 export function Composer({
@@ -29,15 +39,22 @@ export function Composer({
   onSend,
   onAttach,
   onMic,
+  onMicPressIn,
+  onMicPressOut,
+  onStop,
   placeholder = 'message',
   disabled = false,
   tray,
   micLabel = 'Record voice note',
+  busy = false,
+  actionsDisabled = false,
+  hasAttachments = false,
 }: ComposerProps) {
   const { focused, handlers } = useInteractiveState();
-  const has = Boolean(value && value.trim().length > 0);
+  const has = hasAttachments || Boolean(value && value.trim().length > 0);
+  const buttonsDisabled = disabled || actionsDisabled;
   const submit = () => {
-    if (has && onSend) onSend(value);
+    if (has && onSend && !buttonsDisabled) onSend(value);
   };
 
   return (
@@ -53,7 +70,7 @@ export function Composer({
     >
       {tray}
       <View style={{ flexDirection: 'row', gap: spacing.sp2, alignItems: 'center' }}>
-        <IconButton icon="attach" label="Attach photo" onClick={onAttach} disabled={disabled} />
+        <IconButton icon="attach" label="Attach photo" onClick={onAttach} disabled={buttonsDisabled} />
         <View
           style={{
             flex: 1,
@@ -95,10 +112,20 @@ export function Composer({
             ]}
           />
         </View>
-        {has ? (
-          <IconButton icon="send" label="Send" variant="primary" onClick={submit} disabled={disabled} />
+        {busy ? (
+          <IconButton icon="stop" label="Stop" variant="outline" onClick={onStop} disabled={buttonsDisabled} />
+        ) : has ? (
+          <IconButton icon="send" label="Send" variant="primary" onClick={submit} disabled={buttonsDisabled} />
         ) : (
-          <IconButton icon="mic" label={micLabel} variant="primary" onClick={onMic} disabled={disabled} />
+          <IconButton
+            icon="mic"
+            label={micLabel}
+            variant="primary"
+            onClick={onMic}
+            onPressIn={onMicPressIn}
+            onPressOut={onMicPressOut}
+            disabled={buttonsDisabled}
+          />
         )}
       </View>
     </View>

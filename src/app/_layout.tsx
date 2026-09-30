@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {
   IBMPlexMono_400Regular,
@@ -10,6 +10,7 @@ import {
 } from '@expo-google-fonts/ibm-plex-mono';
 import { VT323_400Regular } from '@expo-google-fonts/vt323';
 import { CRTScreen, colors } from '../design-system';
+import { SessionsProvider } from '../state/SessionsContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -21,6 +22,7 @@ export default function RootLayout() {
     IBMPlexMono_400Regular_Italic,
     VT323_400Regular,
   });
+  const pathname = usePathname();
 
   useEffect(() => {
     if (fontsLoaded || fontError) {
@@ -32,14 +34,22 @@ export default function RootLayout() {
     return null;
   }
 
+  // The full-screen photo viewer drops the CRT scanlines/glow for a pure black backdrop.
+  const crtLevel = pathname.includes('/photo/') ? 'subtle' : 'standard';
+
   return (
-    <CRTScreen level="standard" style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surfaceApp } }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="chat" />
-        <Stack.Screen name="design-system" />
-        <Stack.Screen name="hands-free" options={{ presentation: 'modal' }} />
-      </Stack>
+    <CRTScreen level={crtLevel} style={{ flex: 1 }}>
+      <SessionsProvider>
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.surfaceApp } }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="sessions" />
+          <Stack.Screen name="s/new" />
+          <Stack.Screen name="s/[id]/index" />
+          <Stack.Screen name="s/[id]/voice" options={{ presentation: 'fullScreenModal' }} />
+          <Stack.Screen name="s/[id]/photo/[msgId]/[n]" options={{ presentation: 'fullScreenModal' }} />
+          <Stack.Screen name="design-system" />
+        </Stack>
+      </SessionsProvider>
     </CRTScreen>
   );
 }

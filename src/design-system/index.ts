@@ -43,6 +43,15 @@ export * from './components/voice/HandsFreePanel';
 // media
 export * from './components/media/ImageFrame';
 export * from './components/media/AttachmentTray';
+export * from './components/media/PhotoViewer';
+
+// session (list + chat shell — new for the full app screens)
+export * from './components/session/SessionRow';
+export * from './components/session/EmptyState';
+export * from './components/session/ActionSheet';
+export * from './components/session/DeleteConfirmSheet';
+export * from './components/session/ContextMenu';
+export * from './components/session/DropOverlay';
 
 // effects
 export * from './components/effects/CRTScreen';

@@ -18,7 +18,7 @@ const BIOS_LINES: { text: string; suffix?: string }[] = [
 export function BootScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const go = React.useCallback(() => router.replace('/chat'), [router]);
+  const go = React.useCallback(() => router.replace('/sessions'), [router]);
 
   useEffect(() => {
     if (Platform.OS !== 'web' || typeof window === 'undefined') return;

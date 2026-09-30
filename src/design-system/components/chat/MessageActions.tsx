@@ -10,9 +10,11 @@ export interface MessageAction {
   glyph: string;
   label: string;
   onClick?: () => void;
+  /** Forces gold text even when not hovered, e.g. "continue" after a stop. */
+  accent?: boolean;
 }
 
-function Action({ glyph, label, onClick }: MessageAction) {
+function Action({ glyph, label, onClick, accent }: MessageAction) {
   const { hovered, handlers } = useInteractiveState();
   return (
     <Pressable
@@ -23,7 +25,7 @@ function Action({ glyph, label, onClick }: MessageAction) {
         webCursor('pointer'),
       ]}
     >
-      <Text style={{ fontFamily: fontFamily.monoRegular, fontSize: fontSize.meta, color: hovered ? colors.textAccent : colors.textMeta }}>
+      <Text style={{ fontFamily: fontFamily.monoRegular, fontSize: fontSize.meta, color: hovered || accent ? colors.textAccent : colors.textMeta }}>
         {glyph} {label}
       </Text>
     </Pressable>
